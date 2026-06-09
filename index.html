@@ -500,8 +500,29 @@
     return ctx.measureText(text).width + 0.02 * px * text.length;
   }
 
+  // Splits a single text line into multiple lines that fit within maxWidth SVG units.
+  function wrapSVGLine(text, maxWidth, fontSize) {
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+      const candidate = current ? current + ' ' + word : word;
+      if (measureText(candidate, fontSize) <= maxWidth) {
+        current = candidate;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    }
+    if (current) lines.push(current);
+    return lines.length ? lines : [''];
+  }
+
   function buildSVGContent({ name, title, mobile, office, web }) {
-    const titleLines = title.split('\n').map(l => l.trim()).filter(Boolean);
+    // Max title width: from text x=146.52 to line end x=299.34 → 152.82 SVG units
+    const MAX_TITLE_W = 152;
+    const rawTitleLines = title.split('\n').map(l => l.trim()).filter(Boolean);
+    const titleLines = rawTitleLines.flatMap(l => wrapSVGLine(l, MAX_TITLE_W, 12));
 
     // Vertical positioning: center name+title in the ~73px upper zone
     // Single title line: name ~37, title ~54
