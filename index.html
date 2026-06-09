@@ -153,6 +153,34 @@
       gap: 10px;
     }
 
+    .other-formats {
+      border: 1.5px solid #dde4e8;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+
+    .other-formats summary {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #888;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .other-formats summary::-webkit-details-marker { display: none; }
+    .other-formats summary::before {
+      content: '▶';
+      font-size: 9px;
+      transition: transform .15s;
+    }
+    .other-formats[open] summary::before { transform: rotate(90deg); }
+    .other-formats .export-grid { margin-top: 12px; }
+
     .btn {
       display: flex;
       align-items: center;
@@ -326,27 +354,49 @@
 
     <div class="export-section">
       <h2>Exportar</h2>
+
       <div class="export-grid">
-        <button class="btn btn-primary" onclick="downloadSVG()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar SVG
-        </button>
-        <button class="btn btn-outline" onclick="copySVG()">
+        <button class="btn btn-primary" onclick="copyHTMLSignature()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copiar código SVG
+          Copiar HTML
         </button>
-        <button class="btn btn-primary" onclick="downloadHTMLSignature()">
+        <button class="btn btn-outline" onclick="downloadHTMLSignature()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar HTML (correo)
-        </button>
-        <button class="btn btn-outline" onclick="copyHTMLSignature()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copiar HTML (correo)
+          Descargar HTML
         </button>
       </div>
+      <p class="field-hint">HTML con enlaces clickeables. Compatible con Outlook Web, Gmail y la mayoría de clientes de correo.</p>
+
+      <details class="other-formats">
+        <summary>Otros formatos</summary>
+        <div class="export-grid">
+          <button class="btn btn-outline" onclick="downloadSVG()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar SVG
+          </button>
+          <button class="btn btn-outline" onclick="copySVG()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar SVG
+          </button>
+        </div>
+        <p class="field-hint" style="margin-top:8px;">SVG para Apple Mail y Thunderbird.</p>
+      </details>
 
       <div class="compat-table">
         <div class="compat-table-header">Compatibilidad con clientes de correo</div>
+
+        <div class="compat-row">
+          <div class="compat-client">
+            <span class="compat-badge badge-html">HTML</span><span>Outlook (web)<br><small style="font-weight:400;color:#666;">outlook.com</small></span>
+          </div>
+          <div class="compat-desc">
+            Usa <strong>Copiar HTML</strong> y pégalo en:<br>
+            <ol>
+              <li>Configuración → Correo → Redactar y responder → Firma de correo</li>
+              <li>Pega el contenido en el editor de firma</li>
+            </ol>
+          </div>
+        </div>
 
         <div class="compat-row">
           <div class="compat-client">
@@ -376,22 +426,10 @@
 
         <div class="compat-row">
           <div class="compat-client">
-            <span class="compat-badge badge-both">SVG / HTML</span><span>Outlook (web)<br><small style="font-weight:400;color:#666;">outlook.com</small></span>
-          </div>
-          <div class="compat-desc">
-            Soporta SVG inline. Usa <strong>Copiar HTML</strong> y pégalo en:<br>
-            <ol>
-              <li>Configuración → Correo → Redactar y responder → Firma de correo</li>
-            </ol>
-          </div>
-        </div>
-
-        <div class="compat-row">
-          <div class="compat-client">
             <span class="compat-badge badge-svg">SVG</span>Apple Mail
           </div>
           <div class="compat-desc">
-            Usa <strong>Descargar SVG</strong>, luego:<br>
+            Usa <strong>Descargar SVG</strong> (Otros formatos), luego:<br>
             <ol>
               <li>Mail → Ajustes → Firmas → arrastra el archivo SVG a la firma</li>
             </ol>
@@ -403,7 +441,7 @@
             <span class="compat-badge badge-svg">SVG</span>Thunderbird
           </div>
           <div class="compat-desc">
-            Usa <strong>Descargar SVG</strong>, luego:<br>
+            Usa <strong>Descargar SVG</strong> (Otros formatos), luego:<br>
             <ol>
               <li>Herramientas → Configuración de cuentas → Firma</li>
               <li>Activa "Adjuntar firma desde archivo" y selecciona el SVG</li>
@@ -455,9 +493,15 @@
   // ── SVG generation ───────────────────────────────────────────────────
   const LOGO_POINTS = '119.21 56.69 93.78 31.26 93.78 31.26 90.78 28.26 90.78 28.26 90.78 28.26 87.78 31.26 87.78 31.26 63.6 55.44 54.19 55.44 54.19 44.83 55.07 43.95 55.07 43.95 80.5 18.52 77.5 15.52 52.07 40.95 26.64 15.52 23.64 18.52 49.07 43.95 49.07 43.95 49.95 44.83 49.95 55.44 49.95 55.44 49.95 59.69 49.95 59.69 49.95 59.69 53.27 59.69 65.35 59.69 90.78 34.26 116.21 59.69 119.21 56.69';
 
+  function measureText(text, px) {
+    if (!measureText._canvas) measureText._canvas = document.createElement('canvas');
+    const ctx = measureText._canvas.getContext('2d');
+    ctx.font = `${px}px Arial`;
+    return ctx.measureText(text).width + 0.02 * px * text.length;
+  }
+
   function buildSVGContent({ name, title, mobile, office, web }) {
     const titleLines = title.split('\n').map(l => l.trim()).filter(Boolean);
-    const contact = [mobile, office, web].filter(Boolean).join('  ·  ');
 
     // Vertical positioning: center name+title in the ~73px upper zone
     // Single title line: name ~37, title ~54
@@ -480,11 +524,30 @@
     const contStyle  = 'fill:#a0a0a0;font-family:Arial,sans-serif;font-size:11px;letter-spacing:.02em;';
     const lineStyle  = 'fill:none;stroke:#a0a0a0;stroke-miterlimit:10;stroke-width:.35;';
 
+    const contactItems = [];
+    if (mobile) contactItems.push({ text: mobile, href: 'tel:' + mobile.replace(/\s/g, '') });
+    if (office) contactItems.push({ text: office, href: 'tel:' + office.replace(/\s/g, '') });
+    if (web)    contactItems.push({ text: web,    href: /^https?:\/\//i.test(web) ? web : 'https://' + web, target: '_blank' });
+
+    const SEP = '  ·  ';
+    let cx = 34.63;
+    const contactParts = contactItems.map((item, i) => {
+      let part = '';
+      if (i > 0) {
+        part += `<text style="${contStyle}" transform="translate(${cx.toFixed(2)} 93.7)" xml:space="preserve">${esc(SEP)}</text>`;
+        cx += measureText(SEP, 11);
+      }
+      const target = item.target ? ` target="${item.target}"` : '';
+      part += `<a href="${esc(item.href)}"${target}><text style="${contStyle}" transform="translate(${cx.toFixed(2)} 93.7)">${esc(item.text)}</text></a>`;
+      cx += measureText(item.text, 11);
+      return part;
+    });
+
     return `  <polygon fill="#285c70" points="${LOGO_POINTS}"/>
   <text style="${nameStyle}" transform="translate(146.52 ${nameY})">${esc(name)}</text>
   <text style="${titleStyle}" transform="translate(146.52 ${titleY})">${titleTspans}</text>
   <line style="${lineStyle}" x1="23.64" y1="73.31" x2="299.34" y2="73.31"/>
-  <text style="${contStyle}" transform="translate(34.63 93.7)" xml:space="preserve">${esc(contact)}</text>`;
+  ${contactParts.join('\n  ')}`;
   }
 
   function generateSVGString(fields) {
@@ -494,18 +557,75 @@ ${buildSVGContent(fields)}
 </svg>`;
   }
 
-  // HTML email version: SVG embedded inline inside a <div>
-  function generateHTMLSignature(fields) {
-    const svgContent = buildSVGContent(fields);
+  // Renders the logo SVG polygon to a PNG data URI via canvas.
+  // Outlook Web and Gmail strip inline SVG but accept <img> tags.
+  function logoToPng(width, height) {
+    return new Promise(resolve => {
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="23.64 15.52 95.57 44.17" width="${width * 2}" height="${height * 2}"><polygon fill="#285c70" points="${LOGO_POINTS}"/></svg>`;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width  = width * 2;
+        canvas.height = height * 2;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+    });
+  }
+
+  // HTML email version: table-based layout replicating SVG proportions at 2x scale (646px display).
+  // All positions are derived from the SVG viewBox (322.98×109.39) × 2.
+  async function generateHTMLSignature({ name, title, mobile, office, web }) {
+    const titleLines = title.split('\n').map(l => l.trim()).filter(Boolean);
+
+    const contactItems = [];
+    if (mobile) contactItems.push({ text: mobile, href: 'tel:' + mobile.replace(/\s/g, '') });
+    if (office) contactItems.push({ text: office, href: 'tel:' + office.replace(/\s/g, '') });
+    if (web)    contactItems.push({ text: web, href: /^https?:\/\//i.test(web) ? web : 'https://' + web, target: '_blank' });
+
+    const linkStyle = 'color:#a0a0a0;text-decoration:none;font-family:Arial,sans-serif;font-size:22px;letter-spacing:0.02em;';
+    const sepStyle  = 'color:#a0a0a0;font-family:Arial,sans-serif;font-size:22px;';
+    const contactHTML = contactItems.map((item, i) => {
+      const sep    = i > 0 ? `<span style="${sepStyle}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>` : '';
+      const target = item.target ? ` target="${item.target}"` : '';
+      return `${sep}<a href="${esc(item.href)}"${target} style="${linkStyle}">${esc(item.text)}</a>`;
+    }).join('');
+
+    // Title lines: 24px, baselines 26px apart (13 SVG units × 2)
+    const titleHTML = titleLines.map((line, i) =>
+      `<div style="margin:${i === 0 ? 8 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:24px;letter-spacing:0.02em;line-height:1;">${esc(line)}</div>`
+    ).join('');
+
+    // Name padding-top mirrors SVG vertical centering:
+    // single title → nameY=37.39 → top of 28px text ≈ 55px; two lines → nameY=29.74 → ≈ 40px
+    const namePaddingTop = titleLines.length <= 1 ? 55 : 40;
+
+    // PNG logo: SVG is stripped by Outlook Web / Gmail editors; raster img survives
+    const logoPng = await logoToPng(191, 88);
+    const logoImg = `<img src="${logoPng}" width="191" height="88" alt="" style="display:block;">`;
+
     return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;">
-<div style="font-family:Arial,sans-serif;max-width:650px;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 322.98 109.39" style="width:100%;max-width:646px;height:auto;display:block;">
-${svgContent}
-  </svg>
-</div>
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;max-width:646px;width:100%;border-collapse:collapse;">
+  <tr>
+    <td style="width:293px;padding:31px 0 28px 47px;vertical-align:top;">${logoImg}</td>
+    <td style="padding:${namePaddingTop}px 0 0 0;vertical-align:top;">
+      <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:28px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
+      ${titleHTML}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding:0;font-size:0;line-height:0;">
+      <div style="margin:0 47px;height:1px;background-color:#a0a0a0;font-size:0;line-height:0;">&nbsp;</div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding:26px 0 22px 69px;">${contactHTML}</td>
+  </tr>
+</table>
 </body>
 </html>`;
   }
@@ -533,18 +653,18 @@ ${svgContent}
       .catch(() => showToast('Error al copiar'));
   }
 
-  function downloadHTMLSignature() {
+  async function downloadHTMLSignature() {
     const fields = getFields();
-    const blob = new Blob([generateHTMLSignature(fields)], { type: 'text/html' });
+    const html = await generateHTMLSignature(fields);
+    const blob = new Blob([html], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `firma-${slugName(fields.name)}.html`;
     a.click();
   }
 
-  function copyHTMLSignature() {
-    const html = generateHTMLSignature(getFields());
-    // Use ClipboardItem to copy as text/html so paste into email clients works
+  async function copyHTMLSignature() {
+    const html = await generateHTMLSignature(getFields());
     if (window.ClipboardItem) {
       const item = new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }) });
       navigator.clipboard.write([item])
