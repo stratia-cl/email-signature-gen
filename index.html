@@ -605,46 +605,46 @@ ${buildSVGContent(fields)}
     if (office) contactItems.push({ text: office, href: 'tel:' + office.replace(/\s/g, '') });
     if (web)    contactItems.push({ text: web, href: /^https?:\/\//i.test(web) ? web : 'https://' + web, target: '_blank' });
 
-    const linkStyle = 'color:#a0a0a0;text-decoration:none;font-family:Arial,sans-serif;font-size:22px;letter-spacing:0.02em;';
-    const sepStyle  = 'color:#a0a0a0;font-family:Arial,sans-serif;font-size:22px;';
+    const linkStyle = 'color:#a0a0a0;text-decoration:none;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.02em;';
+    const sepStyle  = 'color:#a0a0a0;font-family:Arial,sans-serif;font-size:11px;';
     const contactHTML = contactItems.map((item, i) => {
       const sep    = i > 0 ? `<span style="${sepStyle}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>` : '';
       const target = item.target ? ` target="${item.target}"` : '';
       return `${sep}<a href="${esc(item.href)}"${target} style="${linkStyle}">${esc(item.text)}</a>`;
     }).join('');
 
-    // Title lines: 24px, baselines 26px apart (13 SVG units × 2)
+    // Title lines: 12px, baselines 13px apart (direct 1× SVG units)
     const titleHTML = titleLines.map((line, i) =>
-      `<div style="margin:${i === 0 ? 8 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:24px;letter-spacing:0.02em;line-height:1;">${esc(line)}</div>`
+      `<div style="margin:${i === 0 ? 4 : 1}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.02em;line-height:1;">${esc(line)}</div>`
     ).join('');
 
-    // Name padding-top mirrors SVG vertical centering:
-    // single title → nameY=37.39 → top of 28px text ≈ 55px; two lines → nameY=29.74 → ≈ 40px
-    const namePaddingTop = titleLines.length <= 1 ? 55 : 40;
+    // Name padding-top: 1× SVG units (nameY minus font ascender ~10px)
+    // single title → nameY=37.39 → ≈27px; two lines → nameY=29.74 → ≈20px
+    const namePaddingTop = titleLines.length <= 1 ? 27 : 20;
 
-    // PNG logo: SVG is stripped by Outlook Web / Gmail editors; raster img survives
-    const logoPng = await logoToPng(191, 88);
-    const logoImg = `<img src="${logoPng}" width="191" height="88" alt="" style="display:block;">`;
+    // PNG logo at 1× display (96×44px), rendered at 2× canvas for sharpness
+    const logoPng = await logoToPng(96, 44);
+    const logoImg = `<img src="${logoPng}" width="96" height="44" alt="" style="display:block;">`;
 
     return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;">
-<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;max-width:646px;width:100%;border-collapse:collapse;">
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;max-width:323px;width:100%;border-collapse:collapse;">
   <tr>
-    <td style="width:293px;padding:31px 0 28px 47px;vertical-align:top;">${logoImg}</td>
+    <td style="width:147px;padding:16px 0 13px 24px;vertical-align:top;">${logoImg}</td>
     <td style="padding:${namePaddingTop}px 0 0 0;vertical-align:top;">
-      <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:28px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
+      <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
       ${titleHTML}
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:0 47px;">
+    <td colspan="2" style="padding:0 24px;">
       <hr style="border:none;border-top:1px solid #a0a0a0;margin:0;padding:0;height:0;">
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:26px 0 22px 69px;">${contactHTML}</td>
+    <td colspan="2" style="padding:13px 0 11px 35px;">${contactHTML}</td>
   </tr>
 </table>
 </body>
