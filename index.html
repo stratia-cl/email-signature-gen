@@ -291,6 +291,37 @@
     }
     .compat-desc li { margin-top: 2px; }
 
+    /* ── SIZE CONTROL ── */
+    .size-control { display: flex; flex-direction: column; gap: 8px; }
+    .size-label-row { display: flex; justify-content: space-between; align-items: center; }
+    .size-label-row label { font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#555; }
+    .size-val { font-size:13px;font-weight:700;color:var(--brand);min-width:52px;text-align:right; }
+
+    input[type="range"] {
+      -webkit-appearance:none; appearance:none;
+      width:100%; height:5px; border-radius:3px;
+      background:var(--brand-faint); outline:none;
+      border:1.5px solid #dde4e8; padding:0; cursor:pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance:none; width:18px; height:18px;
+      border-radius:50%; background:var(--brand); cursor:pointer; border:none;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width:18px; height:18px; border-radius:50%;
+      background:var(--brand); cursor:pointer; border:none;
+    }
+
+    .size-presets { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+    .btn-preset {
+      padding:7px 10px; font-size:11px; font-weight:700; font-family:Arial,sans-serif;
+      color:var(--brand); background:white; border:1.5px solid var(--brand);
+      border-radius:var(--radius); cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:5px;
+      transition:background .15s, color .15s;
+    }
+    .btn-preset:hover { background:var(--brand-faint); }
+
     @media (max-width: 820px) {
       main { grid-template-columns: 1fr; }
       .form-panel { border-right: none; border-bottom: 1px solid #dde4e8; }
@@ -355,6 +386,15 @@
     <div class="export-section">
       <h2>Exportar</h2>
 
+      <div class="size-control">
+        <div class="size-label-row">
+          <label>Tamaño de la firma</label>
+          <span class="size-val"><span id="size-display">450</span> px</span>
+        </div>
+        <input type="range" id="size-slider" min="100" max="500" value="450"
+               oninput="document.getElementById('size-display').textContent=this.value">
+      </div>
+
       <div class="export-grid">
         <button class="btn btn-primary" onclick="copyHTMLSignature()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -366,6 +406,22 @@
         </button>
       </div>
       <p class="field-hint">HTML con enlaces clickeables. Compatible con Outlook Web, Gmail y la mayoría de clientes de correo.</p>
+
+      <div class="size-presets">
+        <button class="btn-preset" onclick="downloadHTMLSignature(100)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          100 px
+        </button>
+        <button class="btn-preset" onclick="downloadHTMLSignature(150)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          150 px
+        </button>
+        <button class="btn-preset" onclick="downloadHTMLSignature(200)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          200 px
+        </button>
+      </div>
+      <p class="field-hint">Tamaños predefinidos — descargan independientemente del slider.</p>
 
       <details class="other-formats">
         <summary>Otros formatos</summary>
@@ -595,9 +651,13 @@ ${buildSVGContent(fields)}
     });
   }
 
-  // HTML email version: table-based layout replicating SVG proportions at 2x scale (646px display).
-  // All positions are derived from the SVG viewBox (322.98×109.39) × 2.
-  async function generateHTMLSignature({ name, title, mobile, office, web }) {
+  // HTML email version. All values scale proportionally from the 1× SVG base (323px wide).
+  // targetWidth drives the scale factor; all dimensions derive from it.
+  async function generateHTMLSignature({ name, title, mobile, office, web }, targetWidth = 450) {
+    const BASE = 323; // SVG viewBox width = 1× reference
+    const s = targetWidth / BASE;
+    const r = v => Math.round(v * s);
+
     const titleLines = title.split('\n').map(l => l.trim()).filter(Boolean);
 
     const contactItems = [];
@@ -605,22 +665,34 @@ ${buildSVGContent(fields)}
     if (office) contactItems.push({ text: office, href: 'tel:' + office.replace(/\s/g, '') });
     if (web)    contactItems.push({ text: web, href: /^https?:\/\//i.test(web) ? web : 'https://' + web, target: '_blank' });
 
-    const linkStyle = 'color:#a0a0a0;text-decoration:none;font-family:Arial,sans-serif;font-size:15px;letter-spacing:0.02em;';
-    const sepStyle  = 'color:#a0a0a0;font-family:Arial,sans-serif;font-size:15px;';
+    const contFontPx = Math.max(6, r(11));
+    const linkStyle = `color:#a0a0a0;text-decoration:none;font-family:Arial,sans-serif;font-size:${contFontPx}px;letter-spacing:0.02em;`;
+    const sepStyle  = `color:#a0a0a0;font-family:Arial,sans-serif;font-size:${contFontPx}px;`;
     const contactHTML = contactItems.map((item, i) => {
       const sep    = i > 0 ? `<span style="${sepStyle}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>` : '';
       const target = item.target ? ` target="${item.target}"` : '';
       return `${sep}<a href="${esc(item.href)}"${target} style="${linkStyle}">${esc(item.text)}</a>`;
     }).join('');
 
-    // Title lines: 17px, baselines ~18px apart
+    const titleFontPx = Math.max(5, r(12));
     const titleHTML = titleLines.map((line, i) =>
-      `<div style="margin:${i === 0 ? 5 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:17px;letter-spacing:0.02em;line-height:1;white-space:nowrap;">${esc(line)}</div>`
+      `<div style="margin:${Math.max(1,r(i===0?4:1))}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:${titleFontPx}px;letter-spacing:0.02em;line-height:1;white-space:nowrap;">${esc(line)}</div>`
     ).join('');
 
-    // PNG logo at ~1.4× display (134×61px), rendered at 2× canvas for sharpness
-    const logoPng = await logoToPng(134, 61);
-    const logoImg = `<img src="${logoPng}" width="134" height="61" alt="" style="display:block;">`;
+    const logoW = Math.max(20, r(96));
+    const logoH = Math.max(9,  r(44));
+    const logoPng = await logoToPng(logoW, logoH);
+    const logoImg = `<img src="${logoPng}" width="${logoW}" height="${logoH}" alt="" style="display:block;">`;
+
+    const nameFontPx  = Math.max(6, r(14));
+    const logoCellW   = r(147);
+    const logoPadT    = r(16);
+    const logoPadB    = r(13);
+    const logoPadL    = r(24);
+    const contPadT    = r(13);
+    const contPadB    = r(11);
+    const contPadL    = r(35);
+    const hrPadL      = r(24);
 
     return `<!DOCTYPE html>
 <html>
@@ -628,19 +700,19 @@ ${buildSVGContent(fields)}
 <body style="margin:0;padding:0;">
 <table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;width:auto;border-collapse:collapse;">
   <tr>
-    <td style="width:205px;padding:22px 0 18px 34px;vertical-align:middle;line-height:1;">${logoImg}</td>
-    <td style="padding:0 34px 0 0;vertical-align:middle;line-height:1;white-space:nowrap;">
-      <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:19px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
+    <td style="width:${logoCellW}px;padding:${logoPadT}px 0 ${logoPadB}px ${logoPadL}px;vertical-align:middle;line-height:1;">${logoImg}</td>
+    <td style="padding:0 ${hrPadL}px 0 0;vertical-align:middle;line-height:1;white-space:nowrap;">
+      <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:${nameFontPx}px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
       ${titleHTML}
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:0 0 0 34px;">
+    <td colspan="2" style="padding:0 0 0 ${hrPadL}px;">
       <hr style="border:none;border-top:1px solid #a0a0a0;margin:0;padding:0;height:0;">
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:18px 0 15px 49px;line-height:1;white-space:nowrap;">${contactHTML}</td>
+    <td colspan="2" style="padding:${contPadT}px 0 ${contPadB}px ${contPadL}px;line-height:1;white-space:nowrap;">${contactHTML}</td>
   </tr>
 </table>
 </body>
@@ -670,18 +742,23 @@ ${buildSVGContent(fields)}
       .catch(() => showToast('Error al copiar'));
   }
 
-  async function downloadHTMLSignature() {
+  function getSliderWidth() {
+    return parseInt(document.getElementById('size-slider').value, 10);
+  }
+
+  async function downloadHTMLSignature(width) {
     const fields = getFields();
-    const html = await generateHTMLSignature(fields);
+    const w = width || getSliderWidth();
+    const html = await generateHTMLSignature(fields, w);
     const blob = new Blob([html], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `firma-${slugName(fields.name)}.html`;
+    a.download = `firma-${slugName(fields.name)}${width ? `-${width}px` : ''}.html`;
     a.click();
   }
 
   async function copyHTMLSignature() {
-    const html = await generateHTMLSignature(getFields());
+    const html = await generateHTMLSignature(getFields(), getSliderWidth());
     if (window.ClipboardItem) {
       const item = new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }) });
       navigator.clipboard.write([item])
