@@ -618,9 +618,6 @@ ${buildSVGContent(fields)}
       `<div style="margin:${i === 0 ? 5 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:17px;letter-spacing:0.02em;line-height:1;">${esc(line)}</div>`
     ).join('');
 
-    // namePaddingTop scaled ×1.394 from 1× values (single→38px, multi→28px)
-    const namePaddingTop = titleLines.length <= 1 ? 38 : 28;
-
     // PNG logo at ~1.4× display (134×61px), rendered at 2× canvas for sharpness
     const logoPng = await logoToPng(134, 61);
     const logoImg = `<img src="${logoPng}" width="134" height="61" alt="" style="display:block;">`;
@@ -631,8 +628,8 @@ ${buildSVGContent(fields)}
 <body style="margin:0;padding:0;">
 <table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;max-width:450px;width:100%;border-collapse:collapse;">
   <tr>
-    <td style="width:205px;padding:22px 0 18px 34px;vertical-align:top;line-height:1;">${logoImg}</td>
-    <td style="padding:${namePaddingTop}px 0 0 0;vertical-align:top;line-height:1;">
+    <td style="width:205px;padding:22px 0 18px 34px;vertical-align:middle;line-height:1;">${logoImg}</td>
+    <td style="padding:0;vertical-align:middle;line-height:1;">
       <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:19px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
       ${titleHTML}
     </td>
