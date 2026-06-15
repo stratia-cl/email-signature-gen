@@ -615,7 +615,7 @@ ${buildSVGContent(fields)}
 
     // Title lines: 17px, baselines ~18px apart
     const titleHTML = titleLines.map((line, i) =>
-      `<div style="margin:${i === 0 ? 5 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:17px;letter-spacing:0.02em;line-height:1;">${esc(line)}</div>`
+      `<div style="margin:${i === 0 ? 5 : 2}px 0 0 0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:17px;letter-spacing:0.02em;line-height:1;white-space:nowrap;">${esc(line)}</div>`
     ).join('');
 
     // PNG logo at ~1.4× display (134×61px), rendered at 2× canvas for sharpness
@@ -626,21 +626,21 @@ ${buildSVGContent(fields)}
 <html>
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;">
-<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;max-width:450px;width:100%;border-collapse:collapse;">
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;width:auto;border-collapse:collapse;">
   <tr>
     <td style="width:205px;padding:22px 0 18px 34px;vertical-align:middle;line-height:1;">${logoImg}</td>
-    <td style="padding:0;vertical-align:middle;line-height:1;">
+    <td style="padding:0 34px 0 0;vertical-align:middle;line-height:1;white-space:nowrap;">
       <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:19px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
       ${titleHTML}
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:0 34px;">
+    <td colspan="2" style="padding:0 0 0 34px;">
       <hr style="border:none;border-top:1px solid #a0a0a0;margin:0;padding:0;height:0;">
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:18px 0 15px 49px;line-height:1;">${contactHTML}</td>
+    <td colspan="2" style="padding:18px 0 15px 49px;line-height:1;white-space:nowrap;">${contactHTML}</td>
   </tr>
 </table>
 </body>
