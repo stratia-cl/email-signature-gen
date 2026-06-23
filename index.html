@@ -671,7 +671,7 @@ ${buildSVGContent(fields)}
     const contactHTML = contactItems.map((item, i) => {
       const sep    = i > 0 ? `&#8203;<span style="${sepStyle}">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>` : '';
       const target = item.target ? ` target="${item.target}"` : '';
-      return `${sep}<a href="${esc(item.href)}"${target} style="${linkStyle}">${esc(item.text)}</a>`;
+      return `${sep}<a href="${esc(item.href)}"${target} style="${linkStyle}"><font color="#a0a0a0">${esc(item.text)}</font></a>`;
     }).join('');
 
     const titleFontPx = Math.max(5, r(12));
@@ -685,7 +685,7 @@ ${buildSVGContent(fields)}
     const logoImg = `<img src="${logoPng}" width="${logoW}" height="${logoH}" alt="" style="display:block;max-width:100%;height:auto;">`;
 
     const nameFontPx  = Math.max(6, r(14));
-    const logoCellPct = Math.round(147 / BASE * 100); // ~45% — percentage keeps cell proportional when table shrinks
+    const logoCellW   = r(147); // total logo-column width (≈46% of base); content width below subtracts padding
     const logoPadT    = r(16);
     const logoPadB    = r(13);
     const logoPadL    = r(24);
@@ -698,17 +698,17 @@ ${buildSVGContent(fields)}
 <html>
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;">
-<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;width:${targetWidth}px;max-width:100%;border-collapse:collapse;">
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,sans-serif;width:auto;max-width:100%;border-collapse:collapse;">
   <tr>
-    <td style="width:${logoCellPct}%;padding:${logoPadT}px 0 ${logoPadB}px ${logoPadL}px;vertical-align:middle;line-height:1;">${logoImg}</td>
+    <td style="width:${logoCellW - logoPadL}px;padding:${logoPadT}px 0 ${logoPadB}px ${logoPadL}px;vertical-align:middle;line-height:1;">${logoImg}</td>
     <td style="padding:0 ${hrPadL}px 0 0;vertical-align:middle;line-height:1;">
       <div style="margin:0;padding:0;color:#285c70;font-family:Arial,sans-serif;font-size:${nameFontPx}px;font-weight:bold;letter-spacing:0.01em;line-height:1;">${esc(name)}</div>
       ${titleHTML}
     </td>
   </tr>
   <tr>
-    <td colspan="2" style="padding:0 0 0 ${hrPadL}px;">
-      <hr style="border:none;border-top:1px solid #a0a0a0;margin:0;padding:0;height:0;">
+    <td colspan="2" style="padding:0 0 0 ${hrPadL}px;font-size:0;line-height:0;">
+      <div style="border-top:1px solid #a0a0a0;font-size:1px;line-height:1px;mso-line-height-rule:exactly;">&#8203;</div>
     </td>
   </tr>
   <tr>
